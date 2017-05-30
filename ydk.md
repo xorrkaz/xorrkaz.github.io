@@ -186,8 +186,83 @@ import argparse
     return True
 ```
 
-Let's break this down.
+Let's break this down.  First, an instance of `Native.Vlan` is created.  This will serve as an anchor point for our
+Create-Update-Read-Delete (CRUD) operation.  Next, an instance of a `Native.Vlan.VlanList` is created.  This may be confusing.
+Even though the class is named _VlanList_, we are creating an instance of a VLAN within the list.  This instance is assigned our
+VLAN ID and our VLAN name.  Finally, this instance is appended to the `vlan_list` object rooted at the `Native.Vlan` object.
+
+Once the `Vlan` object instance has been properly defined, it can be pushed to the device via the CRUDService.  Assuming this returns
+successfully, inspecting the running configuration on the device in question will show the newly created VLAN.  The full script can
+be found below:
+
+```python
+#!/usr/bin/env python
+
+from ydk.models.cisco_ios_xe.Cisco_IOS_XE_native import Native
+from ydk.services import CRUDService
+from ydk.providers import NetconfServiceProvider
+import argparse
+
+class VlanCreator():
+
+  def __init__(self, **kwargs):
+    self.cs = CRUDService()
+    self.ne = NetconfServiceProvider(
+      address=kwargs['device'], port=kwargs['port'], username=kwargs['username'], password=kwargs['password'])
+
+    self.vid = kwargs['vid']
+    self.vname = kwargs['vname']
+
+  def create_vlan(self):
+    vlan = Native.Vlan()
+    vlan_list_inst = Native.Vlan.VlanList()
+    vlan_list_inst.id = self.vid
+    vlan_list_inst.name = self.vname
+    vlan.vlan_list.append(vlan_list_inst)
+
+    try:
+      self.cs.create(self.ne, vlan)
+    except Exception as e:
+      print('Error adding VLAN {} to {}: {}'.format(
+        self.vid, self.device, e))
+      return False
+
+    return True
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Add a new VLAN to a Cisco IOS-XE switch')
-  parser.add_argument("--vlanid", type=int, )
+  parser.add_argument('--vlanid', type=int, required=True, help='VLAN ID to add')
+  parser.add_argument('--vlanname', type=str, required=True, help='VLAN Name')
+  parser.add_argument('--device', type=str, required=True, help='Name or IP address of switch')
+  parser.add_argument('--port', type=int, default=830, help='Port to use for NETCONF; default 830')
+  parser.add_argument('--username', type=str, required=True, help='Username to use to connect to the device')
+  parser.add_argument('--password', type=str, required=True, help='Password to use to connect to the device')
+  args = parser.parse_args()
+
+  vc = VlanCreator(device=args.device, port=args.port, username=args.username, password=args.password,
+    vid=args.vlanid, vname=args.vlanname)
+
+  result = vc.create_vlan()
+  if result:
+    print('VLAN {} was created successfully!'.format(args.vlanid))
+
+```
+
+The script can be run using the following command:
+
+```
+$ vlans.py --vlanid 200 --vlanname LAB --device 10.1.1.10 --port 830 --username admin --password admin
+VLAN 200 was created successfully!
+```
+
+After running it, confirm the VLAN was created on the switch:
+
+```
+Switch#show run | begin vlan 200
+vlan 200
+ name LAB
+```
+
+Will you have to do all of this each time you need to write use a YANG module or write a YDK script?  Not all of the steps.  As you
+begin to get more comfortable with the structure of YANG modules and how they translate to YDK it should become second nature to
+build powerful automation scripts using YANG and YDK.
