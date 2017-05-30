@@ -15,7 +15,7 @@ a Python script that will push the VLAN changes to the required switches.
 
 First, let's make sure YANG-based NETCONF is enabled on the device.  To do that, do the following:
 
-    ```
-    Switch#config t
-    Switch(config)#**netconf-yang**
-    ```
+```
+Switch#config t
+Switch(config)#netconf-yang
+```
