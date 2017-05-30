@@ -144,7 +144,50 @@ Now that we have the path we need, let's install the YDK and the packages for th
 following command:
 
 ```
-pip install ydk-models-cisco-ios-xe
+$ pip install ydk-models-cisco-ios-xe
 ```
 
 This will install everything you need.  But, if you run into problems, have a look at the [YDK GitHub page](https://github.com/CiscoDevNet/ydk-py).
+
+In order to find the specific Python module name, class, and properties needed to create a VLAN, we can explore the
+[YDK IOS-XE docs](xr.cisco.com/py/docs/ydk.models.cisco_ios_xe.html).  You'll note there is no `Cisco_IOS_XE_vlan` Python module
+here.  Remember, since the `Cisco-IOS-XE-vlan` module augments the `Cisco-IOS-XE-native` module, we should look at the
+`Cisco_IOS_XE_native` module and classes.  Since our starting point was `/ios:native/ios:vlan/vlan-list`, click down through the
+`Cisco_IOS_XE_native` classes to the **Native > Vlan > VlanList** class.  Here we see the properties we expect based on the
+pyang tree we generated before.
+
+![VlanList docs](vlan_list.png)
+
+Let's start to construct our script to create a new VLAN.  We know the module we need (`Cisco_IOS_XE_native`), and we know the properties`
+we want to set (create a VLAN with an ID and a name).
+
+```python
+from ydk.models.cisco_ios_xe.Cisco_IOS_XE_native import Native
+from ydk.services import CRUDService
+from ydk.providers import NetconfServiceProvider
+import argparse
+
+...
+
+  def create_vlan(self):
+    vlan = Native.Vlan()
+    vlan_list_inst = Native.Vlan.VlanList()
+    vlan_list_inst.id = self.vid
+    vlan_list_inst.name = self.vname
+    vlan.vlan_list.append(vlan_list_inst)
+
+    try:
+      self.cs.create(self.ne, vlan)
+    except Exception as e:
+      print('Error adding VLAN {} to {}: {}'.format(
+        self.vid, self.device, e))
+      return False
+
+    return True
+```
+
+Let's break this down.
+
+if __name__ == '__main__':
+  parser = argparse.ArgumentParser(description='Add a new VLAN to a Cisco IOS-XE switch')
+  parser.add_argument("--vlanid", type=int, )
