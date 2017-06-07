@@ -158,7 +158,7 @@ pyang tree we generated before.
 
 ![VlanList docs](vlan_list.png)
 
-Let's start to construct our script to create a new VLAN.  We know the module we need (`Cisco_IOS_XE_native`), and we know the properties`
+Let's start to construct our script to create a new VLAN.  We know the module we need (`Cisco_IOS_XE_native`), and we know the properties
 we want to set (create a VLAN with an ID and a name).
 
 ```python
