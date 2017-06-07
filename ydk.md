@@ -150,7 +150,7 @@ $ pip install ydk-models-cisco-ios-xe
 This will install everything you need.  But, if you run into problems, have a look at the [YDK GitHub page](https://github.com/CiscoDevNet/ydk-py).
 
 In order to find the specific Python module name, class, and properties needed to create a VLAN, we can explore the
-[YDK IOS-XE docs](xr.cisco.com/py/docs/ydk.models.cisco_ios_xe.html).  You'll note there is no `Cisco_IOS_XE_vlan` Python module
+[YDK IOS-XE docs](http://ydk.cisco.com/py/docs/ydk.models.cisco_ios_xe.html).  You'll note there is no `Cisco_IOS_XE_vlan` Python module
 here.  Remember, since the `Cisco-IOS-XE-vlan` module augments the `Cisco-IOS-XE-native` module, we should look at the
 `Cisco_IOS_XE_native` module and classes.  Since our starting point was `/ios:native/ios:vlan/vlan-list`, click down through the
 `Cisco_IOS_XE_native` classes to the **Native > Vlan > VlanList** class.  Here we see the properties we expect based on the
@@ -263,6 +263,6 @@ vlan 200
  name LAB
 ```
 
-Will you have to do all of this each time you need to write use a YANG module or write a YDK script?  Not all of the steps.  As you
+Will you have to do all of this each time you need to write use a YANG module or write a YDK script?  No, not all of the steps.  As you
 begin to get more comfortable with the structure of YANG modules and how they translate to YDK it should become second nature to
 build powerful automation scripts using YANG and YDK.
