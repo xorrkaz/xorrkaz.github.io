@@ -108,7 +108,7 @@ Something else to note about Cisco _native_ modules: they kind of resemble the C
 That is, if you're used to configuring something like the following:
 
 ```
-vlan 2003
+vlan 200
  name LAB
 ```
 
