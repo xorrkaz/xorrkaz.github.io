@@ -91,8 +91,9 @@ module: Cisco-IOS-XE-vlan
 ```
 
 There's a lot of output here, and it might get confusing as to where to start.  Let's look towards the top.  In particular,
-note the `augment /ios:native` bit.  This indicates that the `Cisco-IOS-XE-vlan` module augments another module that has a
-namespace of `ios`.  If you open the `Cisco-IOS-XE-vlan.yang` file in a text editor, you will see the following close to the
+note the `augment /ios:native` bit.  This indicates that the `vlan` sub-tree from the `Cisco-IOS-XE-vlan` module augments
+the `/ios:native/ios:vlan` sub-tree defined in another module.  That other module has a namespace of `ios`.  If you open
+the `Cisco-IOS-XE-vlan.yang` file in a text editor, you will see the following close to the
 top of the file:
 
 ```
